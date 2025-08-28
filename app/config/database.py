@@ -14,5 +14,10 @@ def get_db():
         dbname = os.getenv("MONGO_DB", "Anuvadini")
         _client = MongoClient(uri)
         _db = _client[dbname]
-        _db.users.create_index("email", unique=True)
+
+         # ✅ Ensure indexes
+        _db.users.create_index("email", unique=True)          # for users
+        _db.users_chat.create_index("user_id", unique=True)   # for users_chat history
+        _db.guest_chat.create_index("guest_id", unique=True) # for guest_chat history.
+
     return _db

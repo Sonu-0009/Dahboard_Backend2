@@ -4,7 +4,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.routes import auth, protected, chat
+from app.routes import auth, protected, users_chat
 
 load_dotenv()
 
@@ -35,4 +35,5 @@ app.add_middleware(
 # Routers
 app.include_router(auth.router)
 app.include_router(protected.router)
-app.include_router(chat.router)
+app.include_router(users_chat.router)
+app.include_router(guest_chat.router) 

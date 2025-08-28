@@ -11,7 +11,7 @@ def save_message(user_id: str, role: str, text: str) -> Dict[str, Any]:
         "time": datetime.utcnow()
     }
 
-    db.chats.update_one(
+    db.users_chat.update_one(
         {"user_id": user_id},
         {"$push": {"messages": chat}, "$set": {"last_updated": datetime.utcnow()}},
         upsert=True
@@ -20,5 +20,5 @@ def save_message(user_id: str, role: str, text: str) -> Dict[str, Any]:
     return chat
 
 def get_chat_history(user_id: str):
-    history = db.chats.find_one({"user_id": user_id}, {"_id": 0, "messages": 1})
+    history = db.users_chat.find_one({"user_id": user_id}, {"_id": 0, "messages": 1})
     return history["messages"] if history else []
