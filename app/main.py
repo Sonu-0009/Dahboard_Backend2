@@ -4,7 +4,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.routes import auth, protected, users_chat
+from app.routes import auth, protected, users_chat, guest_chat
 
 load_dotenv()
 
