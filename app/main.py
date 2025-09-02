@@ -5,6 +5,8 @@ from starlette.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from app.routes import auth, protected, users_chat, guest_chat
+from app.routes import forms as forms_routes  # ✅ add forms router
+from app.routes import form_responses as form_responses_routes  # ✅ add form responses router
 
 load_dotenv()
 
@@ -36,4 +38,6 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(protected.router)
 app.include_router(users_chat.router)
-app.include_router(guest_chat.router) 
+app.include_router(guest_chat.router)
+app.include_router(forms_routes.router)  # ✅ mount forms 
+app.include_router(form_responses_routes.router)  # ✅ mount form responses
