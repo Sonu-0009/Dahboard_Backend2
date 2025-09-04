@@ -18,7 +18,6 @@ async def signup(user: UserCreate):
 
     return UserResponse(
         id=str(result.inserted_id),
-        username=user.username,
         email=user.email,
         mobile=user.mobile,
         gender=user.gender,
@@ -38,7 +37,7 @@ async def login(user: UserLogin, request: Request):
     # Save session
     request.session["user_id"] = str(db_user["_id"])
     request.session["role"] = db_user["role"]
-    request.session["username"] = db_user["username"]   # ✅ added
+    
     request.session["email"] = db_user["email"]         # ✅ added
 
     # Redirect based on role
@@ -51,7 +50,6 @@ async def login(user: UserLogin, request: Request):
 
     return {
         "id": str(db_user["_id"]),
-        "username": db_user["username"],
         "email": db_user["email"],
         "role": db_user["role"],
         "redirect_url": redirect_url

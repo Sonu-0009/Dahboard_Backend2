@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class UserCreate(BaseModel):
-    username: str
+
     email: str
     password: str
     mobile: str
@@ -13,7 +13,6 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
     id: str
-    username: str
     email: str
     mobile: str
     gender: str

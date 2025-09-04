@@ -59,12 +59,12 @@ def normalize_question_ids(questions: List[Question]) -> List[Dict[str, Any]]:
 
 # ---------- endpoints
 
-@router.post("", summary="Create a new form (admin/super_admin only)")
+@router.post("", summary="Create a new form (admin only)")
 async def create_form(payload: FormCreate, request: Request):
     """
-    Creates a form owned by the logged-in admin or super_admin.
+    Creates a form owned by the logged-in admin.
     """
-    require_role(request, "admin", "super_admin")
+    require_role(request, "admin")
     doc = {
         "title": payload.title,
         "description": payload.description,
@@ -107,14 +107,16 @@ async def get_form(form_id: str, request: Request):
 @router.delete("/{form_id}", summary="Delete form and cascade delete responses")
 async def delete_form(form_id: str, request: Request):
     """
-    Deletes a form (owner/super_admin) and all its responses (cascade).
+    Deletes a form (admin owner only) and all its responses (cascade).
     """
-    require_role(request, "admin", "super_admin")
+    require_role(request, "admin")
     form = forms_model.get_form_by_id(form_id)
     if not form:
         raise HTTPException(status_code=404, detail="Form not found")
 
-    ensure_owner_or_super(form, request)
+    # Only the form owner (admin) can delete
+    if str(form.get("created_by")) != request.session.get("user_id"):
+        raise HTTPException(status_code=403, detail="Not authorized for this form")
     return forms_model.delete_form_and_responses(form_id)
 
 # ---------- responses
@@ -138,7 +140,9 @@ async def form_summary(
     if not form:
         raise HTTPException(status_code=404, detail="Form not found")
 
-    ensure_owner_or_super(form, request)
+    # Admin can only see their own forms, super_admin can see all
+    if not is_super_admin(request) and str(form.get("created_by")) != request.session.get("user_id"):
+        raise HTTPException(status_code=403, detail="Not authorized for this form")
 
     total = db.form_responses.count_documents({"form_id": form_id})
     cursor = (
